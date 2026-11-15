@@ -135,7 +135,7 @@ Leanによる形式的証明と、RustやRによる数値実装を結びつけ�
 | 証明 | Lean 4 と Mathlib | 市場のルールと仮定を定義し、そこから導ける価格関係を証明する |
 | 描画 | R と Quarto | 入力を整え、RiemannFinMath を呼び、結果を表と図にする。R では価格を計算し直さない |
 
-この本は、Coral Book『金融工学の応用基礎』（旧 LagrangeFinance『エンタープライズ金融モデル構築』）を受け継ぐ。章立ては新しくし、Coral Book の計算例は第II部と第III部で受け継ぐ。Coral Book 自体は変更しない。
+本書では、Coral Book『金融工学の応用基礎』の計算例を題材に、市場の仮定とそこから導かれる価格関係をLeanで確かめる。
 
 ## 三部作の一冊として {.unnumbered}
 
