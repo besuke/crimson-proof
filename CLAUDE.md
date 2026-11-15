@@ -1,4 +1,6 @@
-# LagrangeAcademy
+# Crimson Proof（旧 LagrangeAcademy）
+
+**三部作と改名（2026-11-15、ユーザーの指示）**：Coral Book『金融工学の応用基礎』（`coral-book`、旧 LagrangeFinance）、Carmine Studio『エンタープライズ金融モデル』（`carmine-studio`、旧 LagrangeFinLab）、Crimson Proof『Leanから見た金融数学』（`crimson-proof`、この本）。手元で計算する／サーバーで動かす／仮定から証明する、の三つの入口。表紙は日本語タイトルが主題でブランド名を添える。アクセント色は深いクリムゾン（`crimson.scss`）。Lean のライブラリー名 `LagrangeAcademy` は検査済みのコードを変えないために残す。以下の記録の旧名は当時のもの。
 
 『Leanから見た金融数学』（LagrangeFinance を受け継ぐ金融数学・金融計算の教材）。ユーザーとのやり取りは日本語。本の出発点は `index.qmd`（はじめに、ユーザーの文章）。構想は `docs/concept.md`（2026-11-07 の初版。新しい構成は、論点が固まってから反映する）。
 
@@ -26,7 +28,7 @@
 - 新しいリポジトリとして作る。LagrangeFinance・GaussQuant・Curie・Riemann は、この教材の作業では変更しない。
 - 役割の分担：Rust（RiemannFinMath）で書き、Lean で証明し、R（Quarto）で描画する（`docs/concept.md` 7 章）。
 - Lean は `lean/`（Lean 4.35.0、Mathlib v4.35.0、モジュール方式）。証明の合格は `lake build` が警告なし、かつ `lake env lean scripts/print_axioms.lean` で標準の 3 公理だけ。`sorry`・`axiom`・`partial`・弱い命題へのすり替えは不可（同 3.2 節）。
-- GitHub：https://github.com/besuke/LagrangeAcademy（公開。ユーザーの判断で当面このまま、2026-11-07）。Lean の CI（`lean/.github/workflows/`、直下にないので動かない）は、まだ動かさない。
+- GitHub：https://github.com/besuke/crimson-proof（旧 besuke/LagrangeAcademy、2026-11-15 に改名。公開。ユーザーの判断で当面このまま、2026-11-07）。Lean の CI（`lean/.github/workflows/`、直下にないので動かない）は、まだ動かさない。
 
 ## 作業のきまり
 

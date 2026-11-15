@@ -10,9 +10,9 @@ lang: ja
 
 book:
   title: "Leanから見た金融数学"
-  subtitle: "型理論・形式的証明から金融モデルの数値実装へ"
+  subtitle: "Crimson Proof ─ 型理論・形式的証明から金融モデルの数値実装へ"
   author: "Eiichi Horigome"
-  output-file: "lagrangeAcademy"
+  output-file: "crimson-proof"
 
   chapters:
     - index.qmd
@@ -37,7 +37,7 @@ book:
 
 format:
   html:
-    theme: cosmo
+    theme: [cosmo, crimson.scss]
     toc: true
     code-fold: false
     # chapters are numbered automatically; the preface is not

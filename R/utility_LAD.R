@@ -1,4 +1,4 @@
-# Common R functions of LagrangeAcademy: the one entry point from the chapters to RiemannFinMath.
+# Common R functions of Crimson Proof: the one entry point from the chapters to RiemannFinMath.
 #
 # The roles are divided:
 # - Rust (RiemannFinMath) computes prices and sensitivities. The chapters use the R package as it is
@@ -10,12 +10,12 @@
 # The chapters on Rust (chapter 1) and on Lean (chapters 3 to 5) also show source code as teaching
 # material; the functions of section 2 read those sources as they are.
 #
-# The names follow LagrangeFinance's R/utility_LFL.R, with the suffix _LAD.
+# The names follow Coral Book's R/utility_LFL.R, with the suffix _LAD.
 
 
 # ---- 1. the project and the package --------------------------------------------------------------
 
-#' The root of the LagrangeAcademy project: the folder that holds _quarto.yml.
+#' The root of the Crimson Proof project: the folder that holds _quarto.yml.
 find_project_dir_LAD <- function() {
   candidates <- unique(c(
     Sys.getenv("QUARTO_PROJECT_DIR"),
@@ -27,7 +27,7 @@ find_project_dir_LAD <- function() {
   hit <- candidates[file.exists(file.path(candidates, "_quarto.yml"))]
 
   if (!length(hit)) {
-    stop("LagrangeAcademy project root was not found.", call. = FALSE)
+    stop("Crimson Proof project root was not found.", call. = FALSE)
   }
 
   normalizePath(hit[1], winslash = "/", mustWork = TRUE)
@@ -527,7 +527,7 @@ format_prdc_summaries_LAD <- function(results) {
     purrr::list_rbind()
 }
 
-#' The ggplot2 theme of LagrangeAcademy.
+#' The ggplot2 theme of Crimson Proof.
 create_academy_theme_LAD <- function(base_size = 12) {
   ggplot2::theme_minimal(base_size = base_size) +
     ggplot2::theme(
