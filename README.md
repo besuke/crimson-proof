@@ -2,6 +2,10 @@
 
 金融モデルを「手元で計算する」「サーバーで動かす」「仮定から何が導けるかを証明する」の三つの入口から学ぶ三部作のうち、**金融モデルの仮定を Lean で定義し、どの仮定のもとで何が成り立つかを証明する**本です（旧名 LagrangeAcademy）。
 
+> この価格は、どの市場の仮定のもとで、無裁定条件を満たすのか。
+
+取引可能な資産、ニューメレール、確率測度を定め、どの市場の仮定のもとで価格が無裁定となるかを Lean で確かめます。現在の公開原稿は、第I部「Leanの論理・型理論・形式的証明」と第II部「無裁定を中心とした金融数学」からなります。第III部では、同じ理論に基づく数値実装と検証を扱う予定です。数式とRコードで計算を再現したい読者には Coral Book を、ブラウザからサーバー上のモデルを操作したい読者には Carmine Studio を案内します。
+
 ## 三部作
 
 | | Coral Book『金融工学の応用基礎』 | Carmine Studio『エンタープライズ金融モデル』 | Crimson Proof『Leanから見た金融数学』 |
@@ -19,8 +23,8 @@
 | オプション | 第II部 第4章 ブラックモデル | 「ブラックモデル」（`#/black-model`） | — |
 | 信用リスク | 第II部 第5章 信用リスクとCDS | 「信用リスクとCDS」（`#/credit-cds`） | — |
 | 金利モデルと早期償還 | 第II部 第6〜8章 | `#/irs-calibration`、`#/rate-models`、`#/early-redemption` | — |
-| PRDC | 第II部 第9章（第III部 第7章の本文は Carmine Studio へ移した） | 「PRDC」（`#/prdc`）、「PRDC のリスク計算」（`#/prdc-risk`） | PRDC のクーポンの分解（`lean/LagrangeAcademy/PrdcCoupon.lean`） |
-| 並列・分散・自動微分 | 第III部の本文は Carmine Studio へ移した（原稿は `part3_enterprise_riemann/` に残す） | 「並列計算」（`#/parallel`）、「PRDC のリスク計算」（`#/prdc-risk`） | — |
+| PRDC | 第II部 第9章 | 「PRDC」（`#/prdc`）、「11. 自動微分」の PRDC の節 | PRDC のクーポンの分解（`lean/LagrangeAcademy/PrdcCoupon.lean`） |
+| 並列・分散・自動微分 | — | 「 9. 並列計算」（`#/enterprise/parallel-computing`）、「10. 分散計算」（`#/enterprise/distributed-jobs`）、「11. 自動微分」（`#/enterprise/automatic-differentiation`） | — |
 | 計算の保証 | 各章の計算例 | 照合の記録（`reconciliation/`） | 第1章 計算と証明、第7章 実数と数値計算 |
 
 Lean のライブラリーの名前（`lean/LagrangeAcademy/`）は、検査済みのコードを変えないために旧名のままです。
@@ -34,6 +38,6 @@ Coral Book（旧 LagrangeFinance）を受け継ぐ金融計算の教材。金融
 - 統計的検証
 - 人の判断
 
-中心の問いは「AI にできないことは何か」。
+本書の中心の問いは、どの市場の仮定のもとで価格が無裁定となるかである。AI と形式的証明の関係は、その問いを考える導入として扱う。
 
 構想は `docs/concept.md`（2026-11-07 初版、設計案）。
