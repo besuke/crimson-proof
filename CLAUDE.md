@@ -68,7 +68,7 @@
 
 **手順**：
 
-- 描画：このリポジトリで `quarto render --to html`。RiemannFinMath は事前に `R CMD INSTALL`（Riemann のリポジトリ）で入れておく。描画では Rust をビルドしない。
-- 描画が途中で `WARN: Error encountered when rendering files` だけを出して止まることがある（2026-11-08 に 1 回）。その章だけを `quarto render <章>.qmd --to html --log-level debug` で描画して確かめ、全体をもう一度描画すると通った。原因は未確認。
+全リポジトリ共通の環境（quarto の中断の手順、ヒアドキュメント、R のパスなど）は Riemann の `CLAUDE.md`（計算サーバー、`../Riemann/CLAUDE.md`）にある。
+
+- 描画：このリポジトリで `quarto render --to html`。RiemannFinMath は事前に入れておく。Windows では Rust なしで、`install.packages("RiemannFinMath", repos = c("https://besuke.github.io/Riemann", "https://cloud.r-project.org"))`（詳しくは `../Riemann/docs/client_guide.md`）。描画では Rust をビルドしない。
 - Lean：`lean/` で `lake build` と `lake env lean scripts/print_axioms.lean`。新しい定理は `scripts/print_axioms.lean` に加える。
-- bash のヒアドキュメントでは `\\` が `\` になる。バックスラッシュを含む編集スクリプトは Write でファイルに書いて実行する。
