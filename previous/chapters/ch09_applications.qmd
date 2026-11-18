@@ -6,11 +6,11 @@
 source("R/utility_LAD.R", encoding = "UTF-8")
 ```
 
-この章では、第6〜8章の命題を、RiemannFinMath が扱う金融商品に当てはめる。各商品を、次の順に書く。
+この章では、第6〜8章の命題を、rmql が扱う金融商品に当てはめる。各商品を、次の順に書く。
 
 1. 市場・契約の仮定
 2. 無裁定から導ける命題
-3. RiemannFinMath による数値例
+3. rmql による数値例
 
 PRDC の節は本文の試作で、ほかの節は骨組みである。確認の記録（誰が確かめ、AI に何を任せたか）は第5章にまとめる。
 
@@ -22,12 +22,12 @@ PRDC の節は本文の試作で、ほかの節は骨組みである。確認の
 
 ### 無裁定から導ける命題
 
-| 命題 | 種類 | Lean | RiemannFinMath |
+| 命題 | 種類 | Lean | rmql |
 |---|---|---|---|
 | 割引係数が正なら、正のキャッシュフローの現在価値は正 | 仮定から導く定理 | 予定 | `compute_bond_value_on_curve` |
 | 正のキャッシュフローの債券の価格は、利回りについて単調に減る | 仮定から導く定理 | 予定 | `compute_price_from_compound_yield` |
 
-### RiemannFinMath による数値例
+### rmql による数値例
 
 扱う予定の内容。
 
@@ -39,11 +39,11 @@ PRDC の節は本文の試作で、ほかの節は骨組みである。確認の
 
 ### 無裁定から導ける命題
 
-| 命題 | 種類 | Lean | RiemannFinMath |
+| 命題 | 種類 | Lean | rmql |
 |---|---|---|---|
 | ハザードが非負なら、生存確率は `[0, 1]` にあり、時間について非増加 | 仮定から導く定理 | 予定 | `compute_survival_probability` |
 
-### RiemannFinMath による数値例
+### rmql による数値例
 
 扱う予定の内容。
 
@@ -55,11 +55,11 @@ PRDC の節は本文の試作で、ほかの節は骨組みである。確認の
 
 ### 無裁定から導ける命題
 
-| 命題 | 種類 | Lean | RiemannFinMath |
+| 命題 | 種類 | Lean | rmql |
 |---|---|---|---|
 | 発行体コールつきの債券の価値は、コールなしの価値以下 | 仮定から導く定理 | 予定 | `compute_hull_white_callable_bond_value` |
 
-### RiemannFinMath による数値例
+### rmql による数値例
 
 扱う予定の内容。
 
@@ -133,7 +133,7 @@ $$
 V_i = \alpha_i N\, P_d(0, T_i)\,\Bigl[f + a\bigl(\tilde C_i(K_1) - \tilde C_i(K_2)\bigr)\Bigr]
 $$
 
-  $\tilde C_i(K)$ は、ニューメレール $P_d(0, T_i)$ で測ったコールの価格（$T_i$ のフォワード測度での期待値）である。RiemannFinMath の `compute_prdc_smile_value()` は、この式で評価している。
+  $\tilde C_i(K)$ は、ニューメレール $P_d(0, T_i)$ で測ったコールの価格（$T_i$ のフォワード測度での期待値）である。rmql の `compute_prdc_smile_value()` は、この式で評価している。
 
 - **証明の進捗**：Lean では未証明。有限の状態の 1 期間モデルで、線形で正の価格づけのもとでの一物一価として証明する予定である（第6章）。
 
@@ -154,9 +154,9 @@ $$
 | 3a. 価値の上下限 | A1〜A4 | 未証明（第6章の支配の原理の予定） |
 | 3b. キャップを外しても価値は下がらない | A1〜A4 | 未証明（支払いの不等式と支配の原理の予定） |
 
-### RiemannFinMath による数値例
+### rmql による数値例
 
-価格と感応度は、`R/utility_LAD.R` を通して、インストール済みの RiemannFinMath（Rust）が計算する。R は、入力の準備、呼び出し、結果の整形と比較だけを行う。ここでの確かめは、命題がこの例の数値で成り立つことを示すだけで、命題の証明ではない。
+価格と感応度は、`R/utility_LAD.R` を通して、インストール済みの rmql（Rust）が計算する。R は、入力の準備、呼び出し、結果の整形と比較だけを行う。ここでの確かめは、命題がこの例の数値で成り立つことを示すだけで、命題の証明ではない。
 
 **クーポンごとの評価**（キャップ 8%）：
 
@@ -164,7 +164,7 @@ $$
 #| label: prdc-coupons-with-cap
 #| echo: false
 show_table_LAD(format_prdc_coupons_LAD(notes[["キャップ 8%"]]), digits = 6,
-               caption = "キャップ 8%：クーポンごとの静的複製（RiemannFinMath が計算）")
+               caption = "キャップ 8%：クーポンごとの静的複製（rmql が計算）")
 ```
 
 | 列 | 意味 |
@@ -176,21 +176,21 @@ show_table_LAD(format_prdc_coupons_LAD(notes[["キャップ 8%"]]), digits = 6,
 | `rate` | クーポン率の、フォワード測度での期待値 |
 | `value` | クーポンの今日の価値 $V_i$（名目 1） |
 
-**ニューメレール**：A4 の円の割引債の価格を、同じカーブから RiemannFinMath で取る。
+**ニューメレール**：A4 の円の割引債の価格を、同じカーブから rmql で取る。
 
 ```{r}
 #| label: prdc-discounts
 #| echo: false
-show_table_LAD(get_prdc_discounts_LAD(with_cap), digits = 6, caption = "円の割引係数（RiemannFinMath が計算）")
+show_table_LAD(get_prdc_discounts_LAD(with_cap), digits = 6, caption = "円の割引係数（rmql が計算）")
 ```
 
-**命題 2 の数値例**：スマイルを平らにすると、静的複製の価格は、定数ボラティリティの閉じた式の価格と一致するはずである。どちらも RiemannFinMath の計算で、R は 2 つを比べるだけである。
+**命題 2 の数値例**：スマイルを平らにすると、静的複製の価格は、定数ボラティリティの閉じた式の価格と一致するはずである。どちらも rmql の計算で、R は 2 つを比べるだけである。
 
 ```{r}
 #| label: prdc-flat-smile
 #| echo: false
 show_table_LAD(compare_prdc_flat_smile_LAD(with_cap, 0.12), digits = 12,
-               caption = "平らなスマイル（12%）での静的複製と閉じた式（どちらも RiemannFinMath）")
+               caption = "平らなスマイル（12%）での静的複製と閉じた式（どちらも rmql）")
 ```
 
 **命題 3a の数値例**：各クーポンの価値が、フロアとキャップの割引債の間にあるか。
@@ -199,7 +199,7 @@ show_table_LAD(compare_prdc_flat_smile_LAD(with_cap, 0.12), digits = 12,
 #| label: prdc-bounds
 #| echo: false
 show_table_LAD(check_prdc_coupon_bounds_LAD(notes[["キャップ 8%"]], with_cap), digits = 6,
-               caption = "クーポンの価値の上下限（値は RiemannFinMath、比較は R）")
+               caption = "クーポンの価値の上下限（値は rmql、比較は R）")
 ```
 
 **命題 3b の数値例**：同じカーブとスマイルで、キャップなしのノートを評価する。キャップなしでは `cap_strike` が `NaN`（値なし）になり、2 本目のコールはない。
@@ -208,14 +208,14 @@ show_table_LAD(check_prdc_coupon_bounds_LAD(notes[["キャップ 8%"]], with_cap
 #| label: prdc-coupons-without-cap
 #| echo: false
 show_table_LAD(format_prdc_coupons_LAD(notes[["キャップなし"]]), digits = 6,
-               caption = "キャップなし：クーポンごとの静的複製（RiemannFinMath が計算）")
+               caption = "キャップなし：クーポンごとの静的複製（rmql が計算）")
 ```
 
 ```{r}
 #| label: prdc-cap-removal
 #| echo: false
 show_table_LAD(compare_prdc_cap_removal_LAD(notes[["キャップ 8%"]], notes[["キャップなし"]]), digits = 6,
-               caption = "キャップを外したときの価値（値は RiemannFinMath、比較は R）")
+               caption = "キャップを外したときの価値（値は rmql、比較は R）")
 ```
 
 この例では、どのクーポンも、ノート全体も、キャップを外して価値が下がっていない。ノートの価格は `r sprintf("%.6f", notes[["キャップ 8%"]]$summary$value)` から `r sprintf("%.6f", notes[["キャップなし"]]$summary$value)` に上がる。
@@ -225,7 +225,7 @@ show_table_LAD(compare_prdc_cap_removal_LAD(notes[["キャップ 8%"]], notes[["
 ```{r}
 #| label: prdc-summaries
 #| echo: false
-show_table_LAD(format_prdc_summaries_LAD(notes), digits = 6, caption = "ノートの価格と感応度（RiemannFinMath が計算）")
+show_table_LAD(format_prdc_summaries_LAD(notes), digits = 6, caption = "ノートの価格と感応度（rmql が計算）")
 ```
 
 - `fx_delta`：スポットに対する感応度。スマイルの delta の行使価格がスポットと一緒に動く（sticky delta）。
@@ -236,7 +236,7 @@ show_table_LAD(format_prdc_summaries_LAD(notes), digits = 6, caption = "ノー�
 
 ### この節の発展の計画
 
-同じ PRDC を題材に、モデルを段階的に発展させる。各段階も、「市場・契約の仮定 → 無裁定から導く命題 → RiemannFinMath による数値例」の順に書く。【計画：2026-11-08 に記録。本文と数値例はこれから】
+同じ PRDC を題材に、モデルを段階的に発展させる。各段階も、「市場・契約の仮定 → 無裁定から導く命題 → rmql による数値例」の順に書く。【計画：2026-11-08 に記録。本文と数値例はこれから】
 
 | 段階 | モデルに加えるもの | 何を説明したいか |
 |---|---|---|
@@ -263,13 +263,13 @@ FX・国内金利・外国金利の共同経路と相関を導入する。ター
 - **無裁定から導く命題（Lean で扱う予定）**：同じモデルと契約条件で発行体コールだけを追加すると、投資家の価値は上がらない。
   - 仮定として明示すること：同じ市場とモデル（同じパスと測度）、同じ契約条件、コール日と償還額は契約で決まっている、発行体は支払価値を最小化する。
   - 骨子：各コール日で、投資家の価値は $\min(\text{即時償還額},\ \text{継続価値}) \le \text{継続価値}$ である。後ろ向きの帰納で、コールつきの価値 ≤ コールなしの価値が従う。
-- **数値例（RiemannFinMath、`R/utility_LAD.R` 経由）**：
+- **数値例（rmql、`R/utility_LAD.R` 経由）**：
   1. 回帰の説明変数を FX だけにした場合と、国内外の金利も加えた場合を比べる。
   2. 回帰の関数形（一次、二次、交差項など）を変えたときの、価格と償還判断の違いを見る。
   3. 回帰用のパスと評価用のパスは分ける。
   4. LS の継続価値は回帰による近似で、近似の誤差は償還判断に表れる。この点も数値例で示す。
 
-**次回の作業**：PRDC で使える RiemannFinMath の機能（3 因子モデル、ターゲット償還・ノックアウト、発行体コールと LS の回帰）と、追加実装が必要なもの（説明変数と関数形の選択など）を、RiemannFinMath のソースで確かめて切り分ける。
+**次回の作業**：PRDC で使える rmql の機能（3 因子モデル、ターゲット償還・ノックアウト、発行体コールと LS の回帰）と、追加実装が必要なもの（説明変数と関数形の選択など）を、rmql のソースで確かめて切り分ける。
 
 ### この節に残る命題
 

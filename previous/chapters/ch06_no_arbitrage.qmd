@@ -25,6 +25,6 @@
 | コールスプレッドの価格の上下限 `0 ≤ C(K₁) − C(K₂) ≤ (K₂ − K₁) P` | 無裁定から導く定理 | 予定 | 第9章 PRDC |
 | コールの価格は行使価格について非増加で凸（バタフライ） | 無裁定から導く定理 | 予定 | FX スマイルの検査 |
 
-## RiemannFinMath による数値例
+## rmql による数値例
 
 扱う予定の内容：オプションの価格（`compute_european_option_value`）でプット・コール・パリティを、二項ツリー（`compute_binomial_option_value`）で無裁定の条件を確かめる。すべて `R/utility_LAD.R` を通して計算する。

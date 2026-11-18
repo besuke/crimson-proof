@@ -6,15 +6,15 @@
 source("R/utility_LAD.R", encoding = "UTF-8")
 ```
 
-この章では、R から RiemannFinMath（Rust）を呼び出し、Rust が返した結果を R で表と図にする。【骨組み：本文はこれから書く】
+この章では、R から rmql（Rust）を呼び出し、Rust が返した結果を R で表と図にする。【骨組み：本文はこれから書く】
 
 ## この本の R の役割
 
 金融計算を扱う章は、すべて次の形で書く。
 
-1. 各章の QMD は `R/utility_LAD.R` を読み込む。このファイルが、RiemannFinMath への共通の入口である。
-2. 価格と感応度は、インストール済みの R パッケージ RiemannFinMath（中身は Rust）が計算する。QMD を描画するときに Rust をビルドすることはない。
-3. R の役割は、入力の準備、RiemannFinMath の公開関数の呼び出し、結果の表・図への整形に限る。価格の式を R で書き直さない。
+1. 各章の QMD は `R/utility_LAD.R` を読み込む。このファイルが、rmql への共通の入口である。
+2. 価格と感応度は、インストール済みの R パッケージ rmql（中身は Rust）が計算する。QMD を描画するときに Rust をビルドすることはない。
+3. R の役割は、入力の準備、rmql の公開関数の呼び出し、結果の表・図への整形に限る。価格の式を R で書き直さない。
 
 Rust と Lean のソースコードを教材として示すのは、第1章（Rust）と第3〜5章（Lean）だけである。
 
@@ -22,10 +22,10 @@ Rust と Lean のソースコードを教材として示すのは、第1章（Ru
 
 | 部分 | 役割 | 主な関数 |
 |---|---|---|
-| 1. パッケージの確認 | RiemannFinMath がインストールされているか確かめる | `check_riemann_package_LAD()` |
+| 1. パッケージの確認 | rmql がインストールされているか確かめる | `check_rmql_package_LAD()` |
 | 2. ソースの表示 | 第1章・第3〜5章で Rust と Lean のソースをそのまま示す | `show_rust_function_LAD()`、`show_lean_source_LAD()` |
 | 3. 入力の準備 | カーブ、スマイル、契約の条件、この本の共通の例 | `create_prdc_example_LAD()` |
-| 4. 呼び出し | RiemannFinMath の公開関数を呼ぶ | `compute_prdc_smile_value_LAD()` |
+| 4. 呼び出し | rmql の公開関数を呼ぶ | `compute_prdc_smile_value_LAD()` |
 | 5. 整形 | 表と図にする | `show_table_LAD()`、`plot_prdc_coupons_LAD()` |
 
 ## RからRustの関数を呼び出す
@@ -45,7 +45,7 @@ show_table_LAD(format_prdc_example_inputs_LAD(example), caption = "共通の例�
 note <- compute_prdc_smile_value_LAD(example$curves, example$smile, example$terms)
 ```
 
-この関数が中で何をしているかを示す。RiemannFinMath の 2 つの公開関数 `create_fx_smile()` と `compute_prdc_smile_value()` を呼び、結果をそのまま返している。
+この関数が中で何をしているかを示す。rmql の 2 つの公開関数 `create_fx_smile()` と `compute_prdc_smile_value()` を呼び、結果をそのまま返している。
 
 ```{r}
 #| label: utility-entry
@@ -58,21 +58,21 @@ Rust が返した値を、そのまま表にする。
 
 ```{r}
 #| label: prdc-summary
-show_table_LAD(note$summary, digits = 6, caption = "ノートの価格と感応度（RiemannFinMath が計算）")
+show_table_LAD(note$summary, digits = 6, caption = "ノートの価格と感応度（rmql が計算）")
 ```
 
 ```{r}
 #| label: prdc-coupons
-show_table_LAD(format_prdc_coupons_LAD(note), digits = 6, caption = "クーポンごとの静的複製（RiemannFinMath が計算）")
+show_table_LAD(format_prdc_coupons_LAD(note), digits = 6, caption = "クーポンごとの静的複製（rmql が計算）")
 ```
 
 ## 共有ライブラリのビルドと読み込み
 
-RiemannFinMath の R パッケージは、Rust のコードを extendr で R につないだものである。
+rmql の R パッケージは、Rust のコードを extendr で R につないだものである。
 
-- `R CMD INSTALL` を実行すると、Rust のコードが共有ライブラリ（Windows では DLL）にコンパイルされる。この作業は、この本を描画する前に、RiemannFinMath のリポジトリで一度だけ行う。
-- 描画のときは、インストール済みのパッケージを読み込むだけである。`library(RiemannFinMath)` か `RiemannFinMath::` で呼ぶと、R はその共有ライブラリを読み込む。
-- パッケージが入っていなければ、`R/utility_LAD.R` を読み込んだ時点で、その理由を示して止まる（`check_riemann_package_LAD()`）。
+- `R CMD INSTALL` を実行すると、Rust のコードが共有ライブラリ（Windows では DLL）にコンパイルされる。この作業は、この本を描画する前に、rmql のリポジトリで一度だけ行う。
+- 描画のときは、インストール済みのパッケージを読み込むだけである。`library(rmql)` か `rmql::` で呼ぶと、R はその共有ライブラリを読み込む。
+- パッケージが入っていなければ、`R/utility_LAD.R` を読み込んだ時点で、その理由を示して止まる（`check_rmql_package_LAD()`）。
 
 扱う予定の内容：
 
@@ -84,16 +84,16 @@ RiemannFinMath の R パッケージは、Rust のコードを extendr で R に
 
 ```{r}
 #| label: loaded-dll
-show_table_LAD(get_riemann_package_info_LAD())
+show_table_LAD(get_rmql_package_info_LAD())
 ```
 
 ## 計算結果の可視化
 
-クーポンごとの期待値と、スポットに対するノートの価格を図にする。後者では、R はスポットの格子を作るだけである。各点の価格は、RiemannFinMath がスマイルを作り直して計算する。
+クーポンごとの期待値と、スポットに対するノートの価格を図にする。後者では、R はスポットの格子を作るだけである。各点の価格は、rmql がスマイルを作り直して計算する。
 
 ```{r}
 #| label: fig-prdc-coupons
-#| fig-cap: "クーポンごとの期待値（静的複製、RiemannFinMath が計算）"
+#| fig-cap: "クーポンごとの期待値（静的複製、rmql が計算）"
 plot_prdc_coupons_LAD(note)
 ```
 
@@ -109,4 +109,4 @@ plot_prdc_value_by_spot_LAD(values)
 | 結果 | 段 | 根拠 |
 |---|---|---|
 | 表と図の数値 | 数値の確認 | 第9章の数値例で、無裁定から導いた関係を満たすことを確かめる。R では計算し直していない |
-| R から Rust への引数の受け渡し | テスト | RiemannFinMath の R のテスト（`tests/testthat/test-fx-smile.R`） |
+| R から Rust への引数の受け渡し | テスト | rmql の R のテスト（`tests/testthat/test-fx-smile.R`） |

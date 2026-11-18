@@ -8,7 +8,7 @@ public import Mathlib.Basic.Real.Basic
 PRDC のノートのクーポンの条件を、Lean の型として書く（第3章）。
 
 - キャップの有無は `Cap` の 2 通りで表す。契約で「上限を適用しない」は `Cap.none` である。
-  RiemannFinMath（Rust）は、同じ条件を `cap = f64::INFINITY` で表す。この対応は第5章で扱う。
+  rmql（Rust）は、同じ条件を `cap = f64::INFINITY` で表す。この対応は第5章で扱う。
 - 仮定（基準の FX が正、レバレッジが正、有限のキャップならフロア以上）は、構造体の欄として
   持たせる。仮定を満たさない条件は、型として作れない。
 - クーポンのレート `couponRate` は、契約のクーポンの定義そのもの（切り詰め）である。

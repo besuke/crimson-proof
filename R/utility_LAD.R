@@ -1,10 +1,10 @@
-# Common R functions of Crimson Proof: the one entry point from the chapters to RiemannFinMath.
+# Common R functions of Crimson Proof: the one entry point from the chapters to rmql.
 #
 # The roles are divided:
-# - Rust (RiemannFinMath) computes prices and sensitivities. The chapters use the R package as it is
+# - Rust (rmql) computes prices and sensitivities. The chapters use the R package as it is
 #   installed (R CMD INSTALL); nothing here builds Rust while a chapter is rendered.
 # - Lean proves the identities and inequalities the calculations rest on.
-# - R, in this file, prepares the inputs, calls the public functions of RiemannFinMath and shapes the
+# - R, in this file, prepares the inputs, calls the public functions of rmql and shapes the
 #   results into tables and figures. No function here writes a pricing formula in R.
 #
 # The chapters on Rust (chapter 1) and on Lean (chapters 3 to 5) also show source code as teaching
@@ -33,35 +33,35 @@ find_project_dir_LAD <- function() {
   normalizePath(hit[1], winslash = "/", mustWork = TRUE)
 }
 
-#' The folder of the RiemannFinMath sources, next to this project (read only by section 2).
-get_riemann_dir_LAD <- function() {
-  normalizePath(file.path(find_project_dir_LAD(), "..", "Riemann"), winslash = "/", mustWork = FALSE)
+#' The folder of the rmql sources, next to this project (read only by section 2).
+get_rmql_dir_LAD <- function() {
+  normalizePath(file.path(find_project_dir_LAD(), "..", "rmql"), winslash = "/", mustWork = FALSE)
 }
 
-#' Check that the installed R package RiemannFinMath can be loaded, and return its version.
+#' Check that the installed R package rmql can be loaded, and return its version.
 #'
-#' The chapters do not build it: install it beforehand with `R CMD INSTALL` from the RiemannFinMath
+#' The chapters do not build it: install it beforehand with `R CMD INSTALL` from the rmql
 #' repository.
-check_riemann_package_LAD <- function() {
-  if (!requireNamespace("RiemannFinMath", quietly = TRUE)) {
+check_rmql_package_LAD <- function() {
+  if (!requireNamespace("rmql", quietly = TRUE)) {
     stop(
-      "RiemannFinMath is not installed. Install the built package with R CMD INSTALL ",
+      "rmql is not installed. Install the built package with R CMD INSTALL ",
       "(the chapters do not build Rust).",
       call. = FALSE
     )
   }
 
-  as.character(utils::packageVersion("RiemannFinMath"))
+  as.character(utils::packageVersion("rmql"))
 }
 
-#' The version and the loaded shared library of RiemannFinMath, as a one-row tibble.
-get_riemann_package_info_LAD <- function() {
-  version <- check_riemann_package_LAD()
-  loadNamespace("RiemannFinMath")
-  dll <- getLoadedDLLs()[["RiemannFinMath"]]
+#' The version and the loaded shared library of rmql, as a one-row tibble.
+get_rmql_package_info_LAD <- function() {
+  version <- check_rmql_package_LAD()
+  loadNamespace("rmql")
+  dll <- getLoadedDLLs()[["rmql"]]
 
   tibble::tibble(
-    package = "RiemannFinMath",
+    package = "rmql",
     version = version,
     library = if (is.null(dll)) NA_character_ else basename(dll[["path"]])
   )
@@ -167,15 +167,15 @@ show_lean_script_LAD <- function(name) {
   show_source_LAD(file.path(find_project_dir_LAD(), "lean", "scripts", paste0(name, ".lean")), "lean")
 }
 
-#' Print one Rust function of RiemannFinMath, with its doc comments, from its source file.
+#' Print one Rust function of rmql, with its doc comments, from its source file.
 #'
-#' @param file The source file under crates/riemann/src, for example "prdc.rs".
+#' @param file The source file under crates/rmql/src, for example "prdc.rs".
 #' @param name The function's name.
 show_rust_function_LAD <- function(file, name) {
-  path <- file.path(get_riemann_dir_LAD(), "crates", "riemann", "src", file)
+  path <- file.path(get_rmql_dir_LAD(), "crates", "rmql", "src", file)
 
   if (!file.exists(path)) {
-    stop("The RiemannFinMath source does not exist: ", path, call. = FALSE)
+    stop("The rmql source does not exist: ", path, call. = FALSE)
   }
 
   text <- readLines(path, encoding = "UTF-8", warn = FALSE)
@@ -216,16 +216,16 @@ show_utility_function_LAD <- function(name) {
 
 #' Flat continuously compounded curves of the two currencies of an FX product.
 #'
-#' @return A list with `domestic` and `foreign` curves of RiemannFinMath.
+#' @return A list with `domestic` and `foreign` curves of rmql.
 create_flat_curves_LAD <- function(today, domestic_rate, foreign_rate) {
   list(
-    domestic = RiemannFinMath::create_flat_curve(today, domestic_rate, "actual_365_fixed", "continuous"),
-    foreign = RiemannFinMath::create_flat_curve(today, foreign_rate, "actual_365_fixed", "continuous")
+    domestic = rmql::create_flat_curve(today, domestic_rate, "actual_365_fixed", "continuous"),
+    foreign = rmql::create_flat_curve(today, foreign_rate, "actual_365_fixed", "continuous")
   )
 }
 
 #' An FX smile quoted by delta, as inputs: the spot, the expiries, the deltas and one row of
-#' volatilities per expiry (puts, ATM, calls). The smile itself is made by RiemannFinMath when a note
+#' volatilities per expiry (puts, ATM, calls). The smile itself is made by rmql when a note
 #' is valued.
 create_fx_smile_spec_LAD <- function(spot, expiries, put_deltas, call_deltas, volatilities) {
   volatilities <- as.matrix(volatilities)
@@ -308,11 +308,11 @@ create_vanilla_example_LAD <- function() {
 }
 
 
-# ---- 4. calling RiemannFinMath -------------------------------------------------------------------
+# ---- 4. calling rmql -------------------------------------------------------------------
 
-#' Value a PRDC note on an FX smile with RiemannFinMath.
+#' Value a PRDC note on an FX smile with rmql.
 #'
-#' RiemannFinMath makes the smile (create_fx_smile) and values the note by static replication
+#' rmql makes the smile (create_fx_smile) and values the note by static replication
 #' (compute_prdc_smile_value), in Rust. The values are returned as they come.
 #'
 #' @param curves The list of [create_flat_curves_LAD()].
@@ -320,18 +320,18 @@ create_vanilla_example_LAD <- function() {
 #' @param terms The list of [create_prdc_terms_LAD()].
 #' @return The list of compute_prdc_smile_value(): `summary`, `coupons` and `pillar_vega`.
 compute_prdc_smile_value_LAD <- function(curves, smile, terms) {
-  check_riemann_package_LAD()
-  fx_smile <- RiemannFinMath::create_fx_smile(
+  check_rmql_package_LAD()
+  fx_smile <- rmql::create_fx_smile(
     smile$spot, curves$domestic, curves$foreign, smile$expiries, smile$put_deltas, smile$call_deltas,
     smile$volatilities
   )
-  RiemannFinMath::compute_prdc_smile_value(
+  rmql::compute_prdc_smile_value(
     fx_smile, terms$coupon_times, terms$accrual_fractions, terms$fx_base, terms$leverage,
     terms$subtraction, terms$floor, terms$cap, terms$notional, terms$redemption
   )
 }
 
-#' Value a PRDC note with RiemannFinMath for each spot of a grid: R makes the grid, RiemannFinMath
+#' Value a PRDC note with rmql for each spot of a grid: R makes the grid, rmql
 #' values each point (the smile's strikes move with the spot).
 #'
 #' @return A tibble with `spot` and the summary of each valuation.
@@ -343,15 +343,15 @@ compute_prdc_smile_values_LAD <- function(spots, curves, smile, terms) {
     purrr::list_rbind()
 }
 
-#' The European call and put of a vanilla example, by RiemannFinMath's closed form
+#' The European call and put of a vanilla example, by rmql's closed form
 #' (compute_european_option_value). The values are returned as they come.
 #'
 #' @param example The list of [create_vanilla_example_LAD()].
 #' @return A tibble with `option_type` and `value`.
 compute_vanilla_values_LAD <- function(example) {
-  check_riemann_package_LAD()
+  check_rmql_package_LAD()
   purrr::map(c("call", "put"), \(type) {
-    RiemannFinMath::compute_european_option_value(
+    rmql::compute_european_option_value(
       type, example$spot, example$strike, example$rate, example$dividend_yield, example$volatility,
       example$time
     )[, c("option_type", "value")]
@@ -359,14 +359,14 @@ compute_vanilla_values_LAD <- function(example) {
     purrr::list_rbind()
 }
 
-#' The European call of a vanilla example by RiemannFinMath's binomial tree
+#' The European call of a vanilla example by rmql's binomial tree
 #' (compute_binomial_option_value), for each number of steps.
 #'
 #' @return A tibble with `steps` and `value`.
 compute_binomial_values_LAD <- function(example, steps) {
-  check_riemann_package_LAD()
+  check_rmql_package_LAD()
   purrr::map(steps, \(n) {
-    RiemannFinMath::compute_binomial_option_value(
+    rmql::compute_binomial_option_value(
       "call", "european", example$spot, example$strike, example$rate, example$dividend_yield,
       example$volatility, example$time, steps = as.integer(n)
     )[, c("steps", "value")]
@@ -375,30 +375,30 @@ compute_binomial_values_LAD <- function(example, steps) {
 }
 
 
-#' The domestic discount factors to the coupon dates of an example, from RiemannFinMath: the price
+#' The domestic discount factors to the coupon dates of an example, from rmql: the price
 #' today of the domestic zero-coupon bond paying 1 at each date, the numeraire of that date's
 #' forward measure.
 #'
 #' The example's times are whole years on Actual/365 (Fixed) from its reference date, so the dates are
-#' the reference date plus 365 days a year, the times RiemannFinMath values the coupons at.
+#' the reference date plus 365 days a year, the times rmql values the coupons at.
 get_prdc_discounts_LAD <- function(example, today = "2026-11-02") {
   dates <- as.Date(today) + round(365 * example$terms$coupon_times)
   tibble::tibble(
     time = example$terms$coupon_times,
     date = dates,
-    domestic_discount = RiemannFinMath::compute_discount(example$curves$domestic, dates)
+    domestic_discount = rmql::compute_discount(example$curves$domestic, dates)
   )
 }
 
 
-# ---- 5. checking consequences of no-arbitrage on RiemannFinMath's numbers ------------------------
+# ---- 5. checking consequences of no-arbitrage on rmql's numbers ------------------------
 #
-# These functions compare numbers that RiemannFinMath returned; they compute no price. A check that
+# These functions compare numbers that rmql returned; they compute no price. A check that
 # holds here holds for the example only, and does not prove the property.
 
 #' Check that each coupon's value lies between its floor and its cap paid for sure:
 #' `floor * P * accrual * notional <= value <= cap * P * accrual * notional`, with the domestic discount
-#' factor `P` from RiemannFinMath (no-arbitrage bounds; chapter 6).
+#' factor `P` from rmql (no-arbitrage bounds; chapter 6).
 check_prdc_coupon_bounds_LAD <- function(result, example) {
   discounts <- get_prdc_discounts_LAD(example)
   terms <- example$terms
@@ -427,15 +427,15 @@ compare_prdc_cap_removal_LAD <- function(with_cap, without_cap) {
   rows
 }
 
-#' Two calculations of RiemannFinMath on one note, which must agree: the static replication on a smile
+#' Two calculations of rmql on one note, which must agree: the static replication on a smile
 #' with one volatility everywhere (compute_prdc_smile_value), and the closed form with that constant
-#' volatility (compute_prdc_value). Both are RiemannFinMath's; R only compares them.
+#' volatility (compute_prdc_value). Both are rmql's; R only compares them.
 compare_prdc_flat_smile_LAD <- function(example, volatility) {
   flat <- utils::modifyList(example$smile, list(volatilities = matrix(volatility, nrow(example$smile$volatilities),
                                                                        ncol(example$smile$volatilities))))
   replication <- compute_prdc_smile_value_LAD(example$curves, flat, example$terms)
   terms <- example$terms
-  closed_form <- RiemannFinMath::compute_prdc_value(
+  closed_form <- rmql::compute_prdc_value(
     example$smile$spot, volatility, example$curves$domestic, example$curves$foreign, terms$coupon_times,
     terms$accrual_fractions, terms$fx_base, terms$leverage, terms$subtraction, terms$floor, terms$cap,
     notional = terms$notional, redemption = terms$redemption
@@ -448,7 +448,7 @@ compare_prdc_flat_smile_LAD <- function(example, volatility) {
   )
 }
 
-#' Check put-call parity on RiemannFinMath's call and put values: `C - P = S exp(-qT) - K exp(-rT)`
+#' Check put-call parity on rmql's call and put values: `C - P = S exp(-qT) - K exp(-rT)`
 #' (a consequence of no-arbitrage; chapter 7). R computes only the right-hand side of the relation,
 #' in double precision, and the difference.
 check_put_call_parity_LAD <- function(values, example) {
@@ -457,20 +457,20 @@ check_put_call_parity_LAD <- function(values, example) {
   rhs <- example$spot * exp(-example$dividend_yield * example$time) -
     example$strike * exp(-example$rate * example$time)
   tibble::tibble(
-    item = c("C - P（RiemannFinMath）", "S e^{-qT} - K e^{-rT}（R）", "差"),
+    item = c("C - P（rmql）", "S e^{-qT} - K e^{-rT}（R）", "差"),
     value = c(sprintf("%.15f", call - put), sprintf("%.15f", rhs), sprintf("%.3e", (call - put) - rhs))
   )
 }
 
-#' Compare RiemannFinMath's binomial values of a European call with its closed form, for each number of
-#' steps. Both are RiemannFinMath's; R only takes the differences.
+#' Compare rmql's binomial values of a European call with its closed form, for each number of
+#' steps. Both are rmql's; R only takes the differences.
 compare_binomial_with_closed_form_LAD <- function(binomial, values) {
   tree <- binomial$value
   closed <- values$value[values$option_type == "call"]
   tibble::tibble(steps = binomial$steps, binomial = tree, closed_form = closed, difference = tree - closed)
 }
 
-#' Check the shape of RiemannFinMath's European call values in the strike (chapter 10): for strikes in
+#' Check the shape of rmql's European call values in the strike (chapter 10): for strikes in
 #' increasing order, the value does not increase, the drop between two strikes is at most
 #' `(K2 - K1) * B`, and for each three consecutive strikes (not necessarily evenly spaced)
 #' `(K3 - K1) C(K2) <= (K3 - K2) C(K1) + (K2 - K1) C(K3)`.
@@ -480,10 +480,10 @@ compare_binomial_with_closed_form_LAD <- function(binomial, values) {
 #'
 #' @return A list with `pairs` and `triples`, tibbles of the values and the checks.
 check_call_strike_shape_LAD <- function(example, strikes) {
-  check_riemann_package_LAD()
+  check_rmql_package_LAD()
   strikes <- sort(strikes)
   calls <- purrr::map_dbl(strikes, \(k) {
-    RiemannFinMath::compute_european_option_value(
+    rmql::compute_european_option_value(
       "call", example$spot, k, example$rate, example$dividend_yield, example$volatility, example$time
     )$value
   })
@@ -514,7 +514,7 @@ show_table_LAD <- function(x, digits = 4, caption = NULL) {
 }
 
 #' The coupons of a valuation, with the columns the text discusses. A strike that does not exist (the
-#' second call of a note without a cap) comes back from RiemannFinMath as NaN.
+#' second call of a note without a cap) comes back from rmql as NaN.
 format_prdc_coupons_LAD <- function(result) {
   result$coupons[, c("time", "forward", "floor_strike", "floor_volatility", "cap_strike", "cap_volatility", "rate", "value")]
 }
@@ -546,7 +546,7 @@ plot_prdc_coupons_LAD <- function(result) {
       x = "クーポンの時点（年）",
       y = "期待クーポン",
       caption = sprintf(
-        "フロアの FX 水準 %.2f、キャップの FX 水準 %s（RiemannFinMath が計算）",
+        "フロアの FX 水準 %.2f、キャップの FX 水準 %s（rmql が計算）",
         coupons$floor_strike[1],
         if (is.nan(coupons$cap_strike[1])) "なし" else sprintf("%.2f", coupons$cap_strike[1])
       )
@@ -565,4 +565,4 @@ plot_prdc_value_by_spot_LAD <- function(values) {
 
 
 # the chapters need the installed package; fail where a chapter starts, with the reason
-check_riemann_package_LAD()
+check_rmql_package_LAD()

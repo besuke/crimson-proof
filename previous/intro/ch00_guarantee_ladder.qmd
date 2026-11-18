@@ -20,9 +20,9 @@ note <- compute_prdc_smile_value_LAD(example$curves, example$smile, example$term
 
 1. **市場・契約の仮定**：何を取引でき、どの通貨・支払日・担保で、何をニューメレールとするか。契約の条件は何か。
 2. **無裁定から導ける命題**：仮定と無裁定から、価格について何が従うか。どこまでを Lean で証明したか。
-3. **RiemannFinMath による数値例**：インストール済みの RiemannFinMath（Rust）で計算し、その数値が命題を満たすかを確かめる。
+3. **rmql による数値例**：インストール済みの rmql（Rust）で計算し、その数値が命題を満たすかを確かめる。
 
-Rust・Lean・R の役割分担は、この問いを調べるためにある。Rust（RiemannFinMath）が計算し、Lean が命題を証明し、R は入力を整えて結果を表と図にする。
+Rust・Lean・R の役割分担は、この問いを調べるためにある。Rust（rmql）が計算し、Lean が命題を証明し、R は入力を整えて結果を表と図にする。
 
 ## 流暢で、検証されていない
 
@@ -35,7 +35,7 @@ AI は、もっともらしいコードを書き、テストを作り、その�
 | 段 | 保証の種類 | 何が保証するか | 例 | 保証の外に残るもの |
 |---|---|---|---|---|
 | 1. 証明 | 機械検査された真 | Lean のカーネル | 支払いの恒等式、無裁定から導いた定理 | 命題が意図どおりか |
-| 2. 数値の確認 | 計算が命題を満たすこと | RiemannFinMath の数値と、無裁定から導いた関係・閉じた式との比較 | 価値が上下限の間にある、キャップを外しても価値が下がらない | 確かめた例の外でも成り立つか |
+| 2. 数値の確認 | 計算が命題を満たすこと | rmql の数値と、無裁定から導いた関係・閉じた式との比較 | 価値が上下限の間にある、キャップを外しても価値が下がらない | 確かめた例の外でも成り立つか |
 | 3. 統計的検証 | 誤差の範囲での一致 | 標本と誤差の評価 | モンテカルロが標準誤差の 4 倍以内 | 偶然の一致、誤差評価の前提 |
 | 4. 仮定 | 人の判断 | 判断した人 | 割引カーブ、スマイル、担保、条項の解釈 | 仮定そのもの |
 
@@ -84,14 +84,14 @@ show_lean_source_LAD("PrdcCoupon")
 
 **複製の価格の一致（仮定から導く命題、未証明）**：上の仮定のもとで、クーポンと同じキャッシュフローを割引債とコールで作れるなら、無裁定からクーポンの価格は複製の価格に等しい。この命題は、市場の仮定に依存する。Lean ではまだ証明していない（第6章の予定）。
 
-### RiemannFinMath による数値例
+### rmql による数値例
 
-この本の共通の例（`create_prdc_example_LAD()`）を、インストール済みの RiemannFinMath で評価する。RiemannFinMath は、上の分解と複製の価格に従って各クーポンを評価する（静的複製）。入力は合成の値で、市場の気配ではない。
+この本の共通の例（`create_prdc_example_LAD()`）を、インストール済みの rmql で評価する。rmql は、上の分解と複製の価格に従って各クーポンを評価する（静的複製）。入力は合成の値で、市場の気配ではない。
 
 ```{r}
 #| label: prdc-smile
 show_table_LAD(format_prdc_example_inputs_LAD(example), caption = "共通の例の条件")
-show_table_LAD(format_prdc_coupons_LAD(note), digits = 6, caption = "クーポンごとの静的複製（RiemannFinMath が計算）")
+show_table_LAD(format_prdc_coupons_LAD(note), digits = 6, caption = "クーポンごとの静的複製（rmql が計算）")
 ```
 
 `floor_strike` と `cap_strike` が、上の $K_1 = 146.25$ と $K_2 = 161.25$ である。
@@ -100,7 +100,7 @@ show_table_LAD(format_prdc_coupons_LAD(note), digits = 6, caption = "クーポ�
 
 ```{r}
 #| label: prdc-bounds
-show_table_LAD(check_prdc_coupon_bounds_LAD(note, example), digits = 6, caption = "クーポンの価値の上下限（値は RiemannFinMath、比較は R）")
+show_table_LAD(check_prdc_coupon_bounds_LAD(note, example), digits = 6, caption = "クーポンの価値の上下限（値は rmql、比較は R）")
 ```
 
 R は表を作り、数値を比べたが、価格は計算していない。価格を計算したのは Rust で、分解を保証したのは Lean である。

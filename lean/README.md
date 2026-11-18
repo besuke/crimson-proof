@@ -17,4 +17,4 @@ lake env lean scripts/print_axioms.lean    # 各定理が依存する公理を�
 |---|---|
 | `LagrangeAcademy/PrdcCoupon.lean` | 実数の恒等式：クーポンの分解（有限のキャップ、キャップなし）（第4章） |
 | `LagrangeAcademy/PrdcTerms.lean` | PRDC の条件と仮定、キャップの有無 `Cap`、契約のクーポン `couponRate`（第3章） |
-| `LagrangeAcademy/PrdcContract.lean` | 契約のクーポンの 2 つの式（RiemannFinMath の静的複製の拠り所）（第5章） |
+| `LagrangeAcademy/PrdcContract.lean` | 契約のクーポンの 2 つの式（rmql の静的複製の拠り所）（第5章） |

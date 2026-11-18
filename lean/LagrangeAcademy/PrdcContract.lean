@@ -12,7 +12,7 @@ public import LagrangeAcademy.PrdcCoupon
 - 有限のキャップ `c`：`couponRate S = floor + a ((S - K₁)⁺ - (S - K₂)⁺)`（コールスプレッド）
 - キャップなし：`couponRate S = floor + a (S - K₁)⁺`（コール 1 本）
 
-ここで `a = leverage / fxBase`、`K₁ = floorStrike`、`K₂ = capStrike c`。RiemannFinMath の
+ここで `a = leverage / fxBase`、`K₁ = floorStrike`、`K₂ = capStrike c`。rmql の
 `compute_prdc_smile_value` は、有限のキャップでは 2 本のコールを、`cap = f64::INFINITY`
 （キャップなし）では 1 本のコールを評価する。
 -/

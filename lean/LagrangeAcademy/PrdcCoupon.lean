@@ -9,10 +9,10 @@ import Mathlib.Tactic.Ring
 # PRDC のクーポンの分解
 
   クーポン `clamp(a S - b, f, c)` は、フロア `f` と、FX の水準 `K₁ = (b + f) / a`、
-  `K₂ = (b + c) / a` のコールスプレッドの `a` 倍の和に等しい。RiemannFinMath の
+  `K₂ = (b + c) / a` のコールスプレッドの `a` 倍の和に等しい。rmql の
   `compute_prdc_smile_value`（静的複製）は、この恒等式を拠り所にしている。
 
-  左辺は Riemann の実装 `(a S - b).max(floor).min(cap)` と同じ形
+  左辺は rmql の実装 `(a S - b).max(floor).min(cap)` と同じ形
   `min (max (a S - b) f) c` で書く。
 
   この証明が保証するのは実数の上の恒等式であり、次のことは保証しない。

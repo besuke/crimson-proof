@@ -24,9 +24,9 @@
 - **第II部の範囲**（2026-11-10）：連続時間の金融数学も Lean による形式的証明の対象として扱う。とくに伊藤の公式、Girsanov の定理、無裁定価格理論、ニューメレールの変更を重要な参照対象とする（formal-mathfin、brownian-motion）。参照先の README の記述と、実際に確かめた定理は区別して書く。
 - **第I部での外部の形式化**（2026-11-10）：例題や参考文献として使うが、Lean 自体の解説を優先する。第1章では、formal-mathfin の CRR から Black–Scholes への収束定理（`binomialPrice_call_tendsto_bs_closed`）を研究例として簡単に紹介するだけにし、証明の詳しい説明は第II部に回す。
 - **旧原稿**（2026-11-10）：旧構成の序章と第1〜9章は `previous/` に、内容を変えずに退避した（`previous/README.md`）。旧原稿の「第N章」は旧構成の番号のまま直さない。新しい本の描画には含めない。
-- **QuantLib は使わない**（2026-11-08）：LagrangeAcademy には QuantLib への言及・照合表・参照リンクを置かない。保証の階段の段 2 は「数値の確認」（RiemannFinMath の数値が、無裁定から導いた関係・閉じた式を満たすか）。
-- 新しいリポジトリとして作る。LagrangeFinance・GaussQuant・Curie・Riemann は、この教材の作業では変更しない。
-- 役割の分担：Rust（RiemannFinMath）で書き、Lean で証明し、R（Quarto）で描画する（`docs/concept.md` 7 章）。
+- **QuantLib は使わない**（2026-11-08）：LagrangeAcademy には QuantLib への言及・照合表・参照リンクを置かない。保証の階段の段 2 は「数値の確認」（rmql の数値が、無裁定から導いた関係・閉じた式を満たすか）。
+- 新しいリポジトリとして作る。LagrangeFinance・GaussQuant・Curie・rmql は、この教材の作業では変更しない。
+- 役割の分担：Rust（rmql）で書き、Lean で証明し、R（Quarto）で描画する（`docs/concept.md` 7 章）。
 - Lean は `lean/`（Lean 4.35.0、Mathlib v4.35.0、モジュール方式）。証明の合格は `lake build` が警告なし、かつ `lake env lean scripts/print_axioms.lean` で標準の 3 公理だけ。`sorry`・`axiom`・`partial`・弱い命題へのすり替えは不可（同 3.2 節）。
 - GitHub：https://github.com/besuke/crimson-proof（旧 besuke/LagrangeAcademy、2026-11-15 に改名。公開。ユーザーの判断で当面このまま、2026-11-07）。Lean の CI（`lean/.github/workflows/`、直下にないので動かない）は、まだ動かさない。
 
@@ -37,7 +37,7 @@
   - 第II部以降の章の構成規約は、後で決める。
 - **QMD の役割**（2026-11-08 のユーザーの指示。2026-11-10 に第I部について改めた）：
   - 第I部では Lean のコードを積極的に載せる。載せるコードは、`lean/LagrangeAcademy/` の検査済みのファイルから読み込む（`show_lean_source_LAD()`、`show_lean_theorem_LAD()`）。QMD に手で写したコードを、検査済みとして示さない。
-  - 金融計算は、インストール済みの R パッケージ RiemannFinMath を使う。各章の QMD は `R/utility_LAD.R` を読み込み、そこを共通の入口として RiemannFinMath の公開関数を呼ぶ。QMD から RiemannFinMath を直接呼ばない。
+  - 金融計算は、インストール済みの R パッケージ rmql を使う。各章の QMD は `R/utility_LAD.R` を読み込み、そこを共通の入口として rmql の公開関数を呼ぶ。QMD から rmql を直接呼ばない。
   - 描画時に Rust をビルドしない。価格式を R で書き直さない。R の役割は、入力の準備、関数の呼び出し、結果の表・図への整形、無裁定の関係の数値による確認に限る。
   - 例の入力は `create_prdc_example_LAD()` のように `utility_LAD.R` の 1 か所にまとめる。
 - **既存の形式化を参照する**（2026-11-10 のユーザーの指示）：
@@ -61,14 +61,14 @@
 - 目次：はじめに、第I部の第1〜9章。第II部・第III部はまだない。章番号は `_quarto.yml` の `number-sections: true` で自動採番。描画の対象は `index.qmd` とルートの `ch*.qmd`。
 - 第I部の章ファイル（ルート）：`ch01_computation_and_proof.qmd` 〜 `ch09_ai_and_formal_proof.qmd`。
 - Lean：旧構成の `PrdcTerms.lean`、`PrdcCoupon.lean`、`PrdcContract.lean` の 7 定理（警告なし、公理は標準の 3 つだけ。2026-11-08 に確認）。旧原稿と、のちの章が使う。
-- `R/utility_LAD.R`：パッケージの確認、ソースの表示、PRDC の例の入力、RiemannFinMath の呼び出し、無裁定の関係の数値による確認、整形。読み込むと RiemannFinMath が入っているかを確かめる。
+- `R/utility_LAD.R`：パッケージの確認、ソースの表示、PRDC の例の入力、rmql の呼び出し、無裁定の関係の数値による確認、整形。読み込むと rmql が入っているかを確かめる。
 - PRDC の発展の計画（5 段階、段 A〜C、発行体コールと Longstaff–Schwartz）と、未証明の命題は、旧原稿 `previous/chapters/ch09_applications.qmd` の「この節の発展の計画」「この節に残る命題」にある。第III部の検討で使う。
 
 **人の確認待ち**（ユーザーの作業）：旧原稿 `previous/chapters/ch05_assumptions_and_scope.qmd` の「命題と実装を照らす」の表と、確認の記録の「人の確認待ち」。すべて「未」。
 
 **手順**：
 
-全リポジトリ共通の環境（quarto の中断の手順、ヒアドキュメント、R のパスなど）は Riemann の `CLAUDE.md`（計算サーバー、`../Riemann/CLAUDE.md`）にある。
+全リポジトリ共通の環境（quarto の中断の手順、ヒアドキュメント、R のパスなど）は rmql の `CLAUDE.md`（計算サーバー、`../rmql/CLAUDE.md`）にある。
 
-- 描画：このリポジトリで `quarto render --to html`。RiemannFinMath は事前に入れておく。Windows では Rust なしで、`install.packages("RiemannFinMath", repos = c("https://besuke.github.io/Riemann", "https://cloud.r-project.org"))`（詳しくは `../Riemann/docs/client_guide.md`）。描画では Rust をビルドしない。
+- 描画：このリポジトリで `quarto render --to html`。rmql は事前に入れておく。Windows では Rust なしで、`install.packages("rmql", repos = c("https://besuke.github.io/rmql", "https://cloud.r-project.org"))`（詳しくは `../rmql/docs/client_guide.md`）。描画では Rust をビルドしない。
 - Lean：`lean/` で `lake build` と `lake env lean scripts/print_axioms.lean`。新しい定理は `scripts/print_axioms.lean` に加える。
