@@ -68,7 +68,7 @@
 
 **手順**：
 
-全リポジトリ共通の環境（quarto の中断の手順、ヒアドキュメント、R のパスなど）は rmql の `CLAUDE.md`（計算サーバー、`../rmql/CLAUDE.md`）にある。
+全リポジトリ共通の環境（quarto の中断の手順、ヒアドキュメント、R のパスなど）は rmql の `CLAUDE.md`（計算サーバー、`../RiemannQL/CLAUDE.md`）にある。
 
-- 描画：このリポジトリで `quarto render --to html`。rmql は事前に入れておく。Windows では Rust なしで、`install.packages("rmql", repos = c("https://besuke.github.io/RiemannQL", "https://cloud.r-project.org"))`（詳しくは `../rmql/docs/client_guide.md`）。描画では Rust をビルドしない。
+- 描画：このリポジトリで `quarto render --to html`。rmql は事前に入れておく。Windows では Rust なしで、`install.packages("rmql", repos = c("https://besuke.github.io/RiemannQL", "https://cloud.r-project.org"))`（詳しくは `../RiemannQL/docs/client_guide.md`）。描画では Rust をビルドしない。
 - Lean：`lean/` で `lake build` と `lake env lean scripts/print_axioms.lean`。新しい定理は `scripts/print_axioms.lean` に加える。
