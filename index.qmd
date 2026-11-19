@@ -144,7 +144,7 @@ Leanによる形式的証明と、RustやRによる数値実装を結びつけ�
 | | Coral Book『金融工学の応用基礎』 | Carmine Studio『エンタープライズ金融モデル』 | Crimson Proof『Leanから見た金融数学』 |
 |---|---|---|---|
 | 学び方 | **手元で計算する**：理論を読み、手元の R で計算を再現する Quarto の本 | **サーバーで動かす**：React で条件を操作し、R サーバー上の rmql でモデルを評価する Web アプリ | **証明する**：金融モデルの仮定を Lean で定義し、どの仮定のもとで何が成り立つかを証明する本 |
-| リポジトリ | <https://github.com/besuke/coral-book> | <https://github.com/besuke/carmine-studio> | <https://github.com/besuke/crimson-proof> |
+| リポジトリ | <https://github.com/besuke/coral-book> | <https://github.com/besuke/Carmine> | <https://github.com/besuke/Crimson> |
 | 始め方 | `quarto render`（または RStudio で各章を実行） | R API（`npm run api`、127.0.0.1:8787）と画面（`npm run dev`）を起動し、<http://127.0.0.1:8081/> を開く | `lean/` で `lake build`、本は `quarto render` |
 
 数式とRコードで計算を再現したい読者には Coral Book を、ブラウザからサーバー上のモデルを操作したい読者には Carmine Studio を勧める。たとえば無裁定と割引なら、Coral Book で割引や複製を手元で計算し、Carmine Studio で OIS の気配を変えてスワップの時価を確かめ、本書で無裁定に必要な市場の仮定を定義して定理を証明する。
